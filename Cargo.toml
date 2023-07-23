@@ -10,4 +10,6 @@ tokio = { version = "1.29.1", features = ["full"] }
 carrot_sdk = { git = "https://github.com/xeynyty/carrot_sdk" }
 inmemory = { git = "https://github.com/xeynyty/inmemory" }
 anyhow = "1.0.72"
-bincode = "2.0.0-rc.3"
+
+[profile.release]
+lto = true
