@@ -21,7 +21,7 @@ async fn main() -> Result<()> {
         let (mut socket, _s) = listener.accept().await?;
         tokio::spawn(async move {
 
-            let mut buf = [0u8; 1024];
+            let mut buf = [0u8; 4048];
 
             loop {
                  let _n = match socket.read(&mut buf).await {
@@ -35,6 +35,7 @@ async fn main() -> Result<()> {
 
                 let req: Request = match buf.as_slice().try_into() {
                     Ok(x) => {
+                        // println!("{:?}", x);
                         x
                     },
                     Err(e) => {
@@ -43,7 +44,9 @@ async fn main() -> Result<()> {
                     }
                 };
 
-                let result: Vec<u8> = response(req, &cache).await.try_into().unwrap_or(vec![6, 6, 6]);
+                let resp = response(req, &cache).await;
+                let result: Vec<u8> = resp.try_into().unwrap_or(vec![6, 6, 6]);
+                // println!("RES LEN {}", result.len());
 
                 if let Err(e) = socket.write_all(&result).await {
                     eprintln!("failed to write to socket; err = {:?}", e);
